@@ -4,6 +4,7 @@ MAINTAINER gmrv
 
 ENV PYTHONUNBUFFERED 1
 
+RUN unlink /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 RUN mkdir /app
 WORKDIR /app
 

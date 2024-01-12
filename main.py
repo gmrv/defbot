@@ -1,8 +1,8 @@
 import logging
 from common import config
-from handlers import commands, buttons
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
-from common.jobs import remove_job_if_exists, login_attempts_checker
+from handlers import commands
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, ChatMemberHandler, MessageHandler, Filters
+
 
 config = config.get_config()
 
@@ -17,19 +17,9 @@ logger = logging.getLogger(__name__)
 def main() -> None:
     updater = Updater(config.TOKEN)
     dispatcher = updater.dispatcher
+    dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, commands.chat_member))
 
-    dispatcher.add_handler(CommandHandler("ping", commands.ping))
-    dispatcher.add_handler(CommandHandler("do", commands.do))
-    dispatcher.add_handler(CommandHandler("scripts", commands.scripts))
-    dispatcher.add_handler(CommandHandler("commands", commands.commands))
-    dispatcher.add_handler(CallbackQueryHandler(buttons.button_handler))
-
-    due = config.JOB_INTERVAL
-    remove_job_if_exists("CHECK-LASTB", updater)
-    updater.job_queue.run_repeating(login_attempts_checker, due, context=config.MASTER_CHAT_ID, name="CHECK-LASTB")
-
-    logger.info("Latbot started")
-    updater.bot.send_message(config.MASTER_CHAT_ID, text='Latbot online...')
+    logger.info("Defbot started")
     updater.start_polling()
     updater.idle()
 

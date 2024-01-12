@@ -1,0 +1,15 @@
+version: '2'
+services:
+  defbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: defbot
+    restart: always
+    environment:
+      - APP_TOKEN=${APP_TOKEN}
+      - APP_TRACE_LEVEL=INFO
+    command: python main.py
+    volumes:
+      - .:/app
+ 
