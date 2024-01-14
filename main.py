@@ -1,16 +1,16 @@
 import logging
+from logging.handlers import RotatingFileHandler
+
 from common import config
 from handlers import commands
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, ChatMemberHandler, MessageHandler, Filters
-
 
 config = config.get_config()
 
 # Enable logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=config.TRACE_LEVEL
+    filename="./logs/defbot.log", filemode="a", format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=config.TRACE_LEVEL
 )
-
 logger = logging.getLogger(__name__)
 
 
