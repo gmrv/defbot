@@ -67,3 +67,6 @@ def antispam_simple(update, context):
         context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
         logger.info("Message removed successfully.")
         context.bot.send_message(chat_id=chat_id, text=f"@{username} Размещение ссылок временно запрещено.")
+
+def all_over(update: Update, context: CallbackContext) -> None:
+    logger.debug(f"ALL_OVER update = {update}");
