@@ -19,8 +19,8 @@ def main() -> None:
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, commands.new_chat_member))
-    dispatcher.add_handler(MessageHandler(None, commands.all_over))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, commands.antispam_simple))
+    dispatcher.add_handler(MessageHandler(None, commands.all_over))
 
     logger.info("Defbot started")
     updater.start_polling()

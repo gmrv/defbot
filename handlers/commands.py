@@ -23,6 +23,7 @@ def new_chat_member(update: Update, context: CallbackContext) -> None:
         join_date = datetime.now(app_config.TZ)
         user_join_dates[user_id] = join_date
         logger.info(f"User {member.username}({user_id}) joined the chat on {join_date.strftime('%Y-%m-%d %H:%M:%S')}")
+
     # Restrict user
     # user_id = update.message.new_chat_members[0].id
     # a = context.bot.restrict_chat_member(
@@ -69,4 +70,5 @@ def antispam_simple(update, context):
         context.bot.send_message(chat_id=chat_id, text=f"@{username} Размещение ссылок временно запрещено.")
 
 def all_over(update: Update, context: CallbackContext) -> None:
-    logger.debug(f"ALL_OVER update = {update}");
+    logger.debug(f"ALL_OVER update = {update}")
+    pass
