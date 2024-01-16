@@ -13,7 +13,7 @@ user_join_dates = {}
 
 
 def new_chat_member(update: Update, context: CallbackContext) -> None:
-    logger.info(update.message.new_chat_members[0].mention_markdown_v2())
+    logger.debug(f"NEW_CHAT_MEMBERS: {update.message.new_chat_members[0].mention_markdown_v2()}")
 
     new_members = update.message.new_chat_members
     chat_id = update.message.chat_id
@@ -34,8 +34,12 @@ def new_chat_member(update: Update, context: CallbackContext) -> None:
     # logger.info(a)
     # update.message.reply_text(f"Привет, {update.message.new_chat_members[0].first_name}! Вам разрешено только чтение, для разрешения отправки сообщений свяжитесь с администраторами группы.")
 
+def left_chat_member(update: Update, context: CallbackContext) -> None:
+    logger.debug(f"LEFT_CHAT_MEMBER: {update}")
+
 
 def antispam(update, context):
+    logger.debug(f"ANTISPAM: {update}")
     chat_id = update.message.chat_id
     user_id = update.message.from_user.id
     username = update.message.from_user.username
@@ -60,6 +64,7 @@ def antispam(update, context):
 
 
 def antispam_simple(update, context):
+    logger.debug(f"ANTISPAM_SIMPLE: {update}")
     chat_id = update.message.chat_id
     username = update.message.from_user.username
     text = update.message.text.replace('\n', '').replace('\r', '')
@@ -69,6 +74,6 @@ def antispam_simple(update, context):
         logger.info("Message removed successfully.")
         context.bot.send_message(chat_id=chat_id, text=f"@{username} Размещение ссылок временно запрещено.")
 
+
 def all_over(update: Update, context: CallbackContext) -> None:
-    logger.debug(f"ALL_OVER update = {update}")
-    pass
+    logger.debug(f"ALL_OVER: {update}")
