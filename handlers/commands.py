@@ -38,6 +38,10 @@ def left_chat_member(update: Update, context: CallbackContext) -> None:
     logger.debug(f"LEFT_CHAT_MEMBER: {update}")
 
 
+def chat_member_change(update:Update, context: CallbackContext) -> None:
+    logger.debug(f"CHAT_MEMBER_CHANGE: {update}")
+
+
 def antispam(update, context):
     logger.debug(f"ANTISPAM: {update}")
     chat_id = update.message.chat_id
