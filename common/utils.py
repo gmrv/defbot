@@ -1,5 +1,5 @@
 import os
 from time import sleep
 
-def message_has_links(input_string):
-    return '@' in input_string or 't.me/' in input_string
+def check_for_stop_words(input_string, stop_words_list):
+    return any(word in input_string for word in stop_words_list)

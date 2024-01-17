@@ -1,3 +1,4 @@
+import json
 import os
 import time
 from typing import Union
@@ -19,6 +20,8 @@ class AppConfig:
     TOKEN = os.getenv("APP_TOKEN")
     TZ = pytz.timezone('Europe/Moscow')
     TS = time.time()
+
+    STOP_WORDS = json.loads(os.getenv("STOP_WORDS", "[]"))
 
     def __init__(self, env):
         pass

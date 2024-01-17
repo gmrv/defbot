@@ -9,6 +9,7 @@ services:
     environment:
       - APP_TOKEN=${APP_TOKEN}
       - APP_TRACE_LEVEL=${APP_TRACE_LEVEL}
+      - STOP_WORDS=${STOP_WORDS}
     command: python main.py
     volumes:
       - .:/app

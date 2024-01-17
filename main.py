@@ -27,6 +27,7 @@ def main() -> None:
     dispatcher.add_handler(MessageHandler(None, commands.all_over))
 
     logger.info("Defbot started")
+    logger.debug(f"Stop words: {config.STOP_WORDS}")
     updater.start_polling()
     updater.idle()
 

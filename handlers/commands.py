@@ -56,13 +56,13 @@ def antispam(update, context):
         current_time = datetime.now(app_config.TZ)
         time_difference = current_time - join_date
         is_less_one_day = abs(time_difference) <= timedelta(days=1)
-        message_has_links = utils.has_links(text)
+        message_has_links = utils.check_for_stop_words(text, app_config.STOP_WORDS)
         logger.info(
             f"User {user_id} joined the chat ({chat_id}) on {join_date.strftime('%Y-%m-%d %H:%M:%S')}, time_difference={time_difference}, is_less_one_day={is_less_one_day}, message_has_links={message_has_links}")
         if (is_less_one_day and message_has_links):
             context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
             logger.info("Message removed successfully.")
-            context.bot.send_message(chat_id=chat_id, text=f"@{username} новым пользователям запрещено постить ссылки.")
+            #context.bot.send_message(chat_id=chat_id, text=f"@{username} новым пользователям запрещено постить ссылки.")
     else:
         logger.info(f"Join date of user {user_id} is not known yet. It may have joined before the bot started logging.")
 
@@ -73,10 +73,10 @@ def antispam_simple(update, context):
     username = update.message.from_user.username
     text = update.message.text.replace('\n', '').replace('\r', '')
     logger.info(text)
-    if utils.message_has_links(text):
+    if utils.check_for_stop_words(text, app_config.STOP_WORDS):
         context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
         logger.info("Message removed successfully.")
-        context.bot.send_message(chat_id=chat_id, text=f"@{username} Размещение ссылок временно запрещено.")
+        #context.bot.send_message(chat_id=chat_id, text=f"@{username} Размещение ссылок временно запрещено.")
 
 
 def all_over(update: Update, context: CallbackContext) -> None:
