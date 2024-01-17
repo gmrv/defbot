@@ -74,9 +74,10 @@ def antispam_simple(update, context):
     text = update.message.text.replace('\n', '').replace('\r', '')
     logger.info(text)
     if utils.check_for_stop_words(text, app_config.STOP_WORDS):
+        update.message.reply_text(f"Сообщение удалено. Подозрение на спам.")
         context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
         logger.info("Message removed successfully.")
-        #context.bot.send_message(chat_id=chat_id, text=f"@{username} Размещение ссылок временно запрещено.")
+        # context.bot.send_message(chat_id=chat_id, text=f"Сообщение удалено. Подозрение на спам.")
 
 
 def all_over(update: Update, context: CallbackContext) -> None:
