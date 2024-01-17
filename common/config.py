@@ -16,12 +16,14 @@ def _parse_bool(val: Union[str, bool]) -> bool:  # pylint: disable=E1136
 
 # AppConfig class with required fields, default values, type checking, and typecasting for int and bool values
 class AppConfig:
-    TRACE_LEVEL = int(os.getenv("APP_TRACE_LEVEL", "20"))
-    TOKEN = os.getenv("APP_TOKEN")
     TZ = pytz.timezone('Europe/Moscow')
     TS = time.time()
 
+    TRACE_LEVEL = int(os.getenv("APP_TRACE_LEVEL", "20"))
+    TOKEN = os.getenv("APP_TOKEN")
     STOP_WORDS = json.loads(os.getenv("STOP_WORDS", "[]"))
+
+    IS_ANTISPAM_ACTIVE = (os.getenv("IS_ANTISPAM_ACTIVE", "True") == "True")
 
     def __init__(self, env):
         pass

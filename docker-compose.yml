@@ -10,6 +10,7 @@ services:
       - APP_TOKEN=${APP_TOKEN}
       - APP_TRACE_LEVEL=${APP_TRACE_LEVEL}
       - STOP_WORDS=${STOP_WORDS}
+      - IS_ANTISPAM_ACTIVE=${IS_ANTISPAM_ACTIVE}
     command: python main.py
     volumes:
       - .:/app
