@@ -8,6 +8,7 @@ services:
     restart: always
     environment:
       - APP_TOKEN=${APP_TOKEN}
+      - MASTER_ID=${MASTER_ID}
       - APP_TRACE_LEVEL=${APP_TRACE_LEVEL}
       - STOP_WORDS_FILE=${STOP_WORDS_FILE}
       - IS_ANTISPAM_ACTIVE=${IS_ANTISPAM_ACTIVE}

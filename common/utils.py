@@ -23,7 +23,8 @@ def read_list_from_file(filename):
             # Read each line in the file
             for line in file:
                 # Strip any leading or trailing whitespaces and add the line to the list
-                data_list.append(line.strip())
+                if len(line.strip()) > 0:
+                    data_list.append(line.strip())
     except FileNotFoundError:
         # Handle file not found exception
         print(f"File '{filename}' not found.")

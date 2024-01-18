@@ -23,6 +23,7 @@ class AppConfig:
 
     TRACE_LEVEL = int(os.getenv("APP_TRACE_LEVEL", "20"))
     TOKEN = os.getenv("APP_TOKEN")
+    MASTER_ID = os.getenv("MASTER_ID")
     STOP_WORDS_FILE = os.getenv("STOP_WORDS_FILE", "words.txt")
     STOP_WORDS = []
     IS_ANTISPAM_ACTIVE = True

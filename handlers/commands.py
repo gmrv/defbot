@@ -88,6 +88,8 @@ def all_over(update: Update, context: CallbackContext) -> None:
 
 def mannage_command(update: Update, context: CallbackContext) -> None:
     command = update.message.text.split()
+    user_id = update.message.from_user.id
+    if not user_id == int(app_config.MASTER_ID): return
     if command[1] == "+":
         lst = str.join(' ', command[2:]).split(', ')
         logger.debug(f"add words to file: {lst}" )
