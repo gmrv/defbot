@@ -3,7 +3,7 @@ import re
 from time import sleep
 
 def is_contains_stop_words(input_string, stop_words_list):
-    return any(word in input_string for word in stop_words_list)
+    return any(word in str.lower(input_string) for word in stop_words_list)
 
 def contain_alphanumeric(word):
     if len(word) < 5: return False
