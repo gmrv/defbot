@@ -69,6 +69,9 @@ def antispam(update, context):
 
 def antispam_simple(update, context):
     logger.debug(f"ANTISPAM_SIMPLE: {update}")
+    if not app_config.IS_ANTISPAM_ACTIVE:
+        logger.debug(f"ANTISPAM_SIMPLE: Antispam not active")
+        return
     chat_id = update.message.chat_id
     username = update.message.from_user.username
     text = update.message.text.replace('\n', '').replace('\r', '')
@@ -82,3 +85,30 @@ def antispam_simple(update, context):
 
 def all_over(update: Update, context: CallbackContext) -> None:
     logger.debug(f"ALL_OVER: {update}")
+
+def mannage_command(update: Update, context: CallbackContext) -> None:
+    command = update.message.text.split()
+    if command[1] == "+":
+        lst = str.join(' ', command[2:]).split(', ')
+        logger.debug(f"add words to file: {lst}" )
+        utils.append_list_to_file(app_config.STOP_WORDS_FILE, lst)
+        app_config.update()
+        logger.info(f"STOP WORDS: {app_config.STOP_WORDS}")
+    if command[1] == "-":
+        lst_to_remove = str.join(' ', command[2:]).split(', ')
+        result_list = utils.remove_elements(app_config.STOP_WORDS, lst_to_remove)
+        logger.debug(f"remove words: {lst_to_remove}" )
+        utils.write_list_to_file(app_config.STOP_WORDS_FILE, result_list)
+        app_config.update()
+        logger.info(f"STOP WORDS: {app_config.STOP_WORDS}")
+    elif command[1] == "a0":
+        app_config.IS_ANTISPAM_ACTIVE = False
+        logger.info("Now antispam inactive")
+        update.message.reply_text(f"Now antispam inactive")
+    elif command[1] == "a1":
+        app_config.IS_ANTISPAM_ACTIVE = True
+        logger.info("Now antispam active")
+        update.message.reply_text(f"Now antispam active")
+    elif command[1] == "ls":
+        update.message.reply_text(f"{app_config.STOP_WORDS}")
+    logger.debug(command)

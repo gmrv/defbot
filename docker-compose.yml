@@ -9,7 +9,7 @@ services:
     environment:
       - APP_TOKEN=${APP_TOKEN}
       - APP_TRACE_LEVEL=${APP_TRACE_LEVEL}
-      - STOP_WORDS=${STOP_WORDS}
+      - STOP_WORDS_FILE=${STOP_WORDS_FILE}
       - IS_ANTISPAM_ACTIVE=${IS_ANTISPAM_ACTIVE}
     command: python main.py
     volumes:

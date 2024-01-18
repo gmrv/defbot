@@ -5,6 +5,8 @@ from typing import Union
 
 import pytz
 
+from common import utils
+
 
 class AppConfigError(Exception):
     pass
@@ -21,16 +23,18 @@ class AppConfig:
 
     TRACE_LEVEL = int(os.getenv("APP_TRACE_LEVEL", "20"))
     TOKEN = os.getenv("APP_TOKEN")
-    STOP_WORDS = json.loads(os.getenv("STOP_WORDS", "[]"))
-
-    IS_ANTISPAM_ACTIVE = (os.getenv("IS_ANTISPAM_ACTIVE", "True") == "True")
+    STOP_WORDS_FILE = os.getenv("STOP_WORDS_FILE", "words.txt")
+    STOP_WORDS = []
+    IS_ANTISPAM_ACTIVE = True
 
     def __init__(self, env):
-        pass
+        self.update()
 
     def __repr__(self):
         return str(self.__dict__)
 
+    def update(self):
+        self.STOP_WORDS = utils.read_list_from_file(self.STOP_WORDS_FILE)
 
 # Expose Config object for app to import
 Config = AppConfig(os.environ)
