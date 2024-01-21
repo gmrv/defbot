@@ -1,17 +1,21 @@
 import os
 import re
 from time import sleep
+from common import config
 
 def is_contains_stop_words(input_string, stop_words_list):
     return any(word in str.lower(input_string) for word in stop_words_list)
+
 
 def contain_alphanumeric(word):
     if len(word) < 5: return False
     return any(char.isalpha() for char in word) and any(char.isdigit() for char in word)
 
+
 def has_alphanumeric_words(text):
     words = re.findall(r'\b\w+\b', text)
     return any(contain_alphanumeric(word) for word in words)
+
 
 def read_list_from_file(filename):
     # Initialize an empty list to store data from the file
@@ -35,6 +39,7 @@ def read_list_from_file(filename):
     # Return the list containing data from the file
     return data_list
 
+
 def append_list_to_file(filename, words):
     try:
         # Open the file in append mode
@@ -47,6 +52,7 @@ def append_list_to_file(filename, words):
         # Handle exceptions
         print(f"An error occurred: {e}")
 
+
 def write_list_to_file(filename, list):
     try:
         # Open the file in write mode and write the elements from the result list
@@ -58,7 +64,28 @@ def write_list_to_file(filename, list):
         # Handle exceptions
         print(f"An error occurred: {e}")
 
+
 def remove_elements(list1, list2):
     # Use a list comprehension to create a new list without common elements
     result_list = [item for item in list1 if item not in list2]
     return result_list
+
+
+def add_trusted_user(user_dict):
+    try:
+        # Open the file in append mode
+        with open("trusted.txt", 'a') as file:
+            # Iterate through the list of words and write each word to the file
+            file.write(user_dict + '\n')
+    except Exception as e:
+        # Handle exceptions
+        print(f"An error occurred: {e}")
+
+
+def send_log_chat(message):
+    app_config = config.get_config()
+    try:
+        app_config.UPDATER.bot.send_message(app_config.LOG_CHAT_ID, text=message)
+    except Exception as e:
+        # Handle exceptions
+        print(f"An error occurred: {e}")

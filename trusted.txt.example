@@ -1,2 +1,2 @@
-{'id': 123456789, 'username': 'trustedusername1'},
-{'id': None, 'username': 'trustedusername2'},
+{'id': 123456789, 'username': 'trustedusername1'}
+{'id': None, 'username': 'trustedusername2'}

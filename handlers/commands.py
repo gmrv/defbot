@@ -1,7 +1,6 @@
 import logging
-import pytz
 from common import config, utils
-from telegram import Update, ChatPermissions
+from telegram import Update
 from telegram.ext import CallbackContext
 from datetime import datetime, timedelta
 
@@ -33,6 +32,7 @@ def new_chat_member(update: Update, context: CallbackContext) -> None:
     # )
     # logger.info(a)
     # update.message.reply_text(f"Привет, {update.message.new_chat_members[0].first_name}! Вам разрешено только чтение, для разрешения отправки сообщений свяжитесь с администраторами группы.")
+
 
 def left_chat_member(update: Update, context: CallbackContext) -> None:
     logger.debug(f"LEFT_CHAT_MEMBER: {update}")
@@ -69,36 +69,48 @@ def antispam(update, context):
 
 def message_handler(update, context):
     user_id = update.message.from_user.id
+    chat_id = update.message.chat_id
     username = update.message.from_user.username
+    text = update.message.text.replace('\n', '').replace('\r', '')
+
+    message_log_string = f"{{'id': {user_id}, 'username': '{username}'}}: {text}"
+
     logger.debug(f"MESSAGE_HANDLER: {update}")
+    logger.debug(f"MESSAGE_HANDLER: MESSAGE_LOG: {message_log_string}")
 
     # Handle command
     if update.message.text[0] == ".":
         # if sender is not the owner do nothing
             is_success = command_handler(update, context)
             if is_success: return
-    # Handle message
-    if not app_config.IS_ANTISPAM_ACTIVE:
-        logger.debug(f"MESSAGE_HANDLER: Antispam not active")
-        return
 
+    # Handle message
     # If message from trusted user
     if user_id in app_config.TRUSTED_ID or username in app_config.TRUSTED_USERNAME:
         logger.debug(f"MESSAGE_HANDLER: Trusted user")
         return
+    else:
+        # if not then offer to trust this user
+        utils.send_log_chat(message_log_string)
 
-    chat_id = update.message.chat_id
-    text = update.message.text.replace('\n', '').replace('\r', '')
-    logger.info(f"MESSAGE_HANDLER: {text}")
+    # If antispam not active then exit
+    if not app_config.IS_ANTISPAM_ACTIVE:
+        logger.debug(f"MESSAGE_HANDLER: Antispam not active")
+        return
+
+    # Spam detecting
     if utils.is_contains_stop_words(text, app_config.STOP_WORDS) or utils.has_alphanumeric_words(text):
         update.message.reply_text(f"Сообщение удалено. Подозрение на спам.")
         context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
         logger.info(f"MESSAGE_HANDLER: Message removed successfully.")
         # context.bot.send_message(chat_id=chat_id, text=f"Сообщение удалено. Подозрение на спам.")
+    else:
+        pass
 
 
 def all_over(update: Update, context: CallbackContext) -> None:
     logger.debug(f"ALL_OVER: {update}")
+
 
 def command_handler(update: Update, context: CallbackContext) -> None:
     user_id = update.message.from_user.id
@@ -134,6 +146,10 @@ def command_handler(update: Update, context: CallbackContext) -> None:
         return True
     elif command[0] == ".ls":
         update.message.reply_text(f"{app_config.STOP_WORDS}")
+        return True
+    elif command[0] == ".u":
+        utils.add_trusted_user(update.message.text[3:])
+        app_config.update()
         return True
     else:
         return False

@@ -24,12 +24,15 @@ class AppConfig:
     TRACE_LEVEL = int(os.getenv("APP_TRACE_LEVEL", "20"))
     TOKEN = os.getenv("APP_TOKEN")
     MASTER_ID = os.getenv("MASTER_ID")
+    LOG_CHAT_ID = os.getenv("LOG_CHAT_ID")
     STOP_WORDS_FILE = os.getenv("STOP_WORDS_FILE", "words.txt")
     STOP_WORDS = []
     IS_ANTISPAM_ACTIVE = True
 
     TRUSTED_ID = []
     TRUSTED_USERNAME = []
+
+    UPDATER = {}
 
     def __init__(self, env):
         self.update()
@@ -44,15 +47,19 @@ class AppConfig:
     def load_trusted(self):
         with open('trusted.txt', 'r') as file:
             for line in file:
-                # Преобразование строки в словарь с использованием ast.literal_eval
-                data_dict = ast.literal_eval(line.strip())
+                if len(line.strip()) > 0:
+                    # Преобразование строки в словарь с использованием ast.literal_eval
+                    data_dict = ast.literal_eval(line.strip())
 
-                # Проверка наличия 'id' и 'username' в словаре
-                if 'id' in data_dict[0] and data_dict[0]['id'] is not None:
-                    self.TRUSTED_ID.append(data_dict[0]['id'])
+                    # Проверка наличия 'id' и 'username' в словаре
+                    if 'id' in data_dict and data_dict['id'] is not None:
+                        self.TRUSTED_ID.append(data_dict['id'])
 
-                if 'username' in data_dict[0]:
-                    self.TRUSTED_USERNAME.append(data_dict[0]['username'])
+                    if 'username' in data_dict and data_dict['username'] is not None:
+                        self.TRUSTED_USERNAME.append(data_dict['username'])
+
+    def set_updater(self, updater):
+        self.UPDATER = updater
 
 # Expose Config object for app to import
 Config = AppConfig(os.environ)
