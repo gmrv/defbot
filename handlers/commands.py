@@ -1,6 +1,6 @@
 import logging
 from common import config, utils
-from telegram import Update
+from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 from datetime import datetime, timedelta
 
@@ -145,11 +145,19 @@ def command_handler(update: Update, context: CallbackContext) -> None:
         update.message.reply_text(f"COMMAND_HANDLER: Now antispam active")
         return True
     elif command[0] == ".ls":
-        update.message.reply_text(f"{app_config.STOP_WORDS}")
+        update.message.reply_text(f"<pre>{app_config.STOP_WORDS}</pre>", parse_mode=ParseMode.HTML)
         return True
     elif command[0] == ".u":
         utils.add_trusted_user(update.message.text[3:])
         app_config.update()
         return True
+    elif command[0] == ".uls":
+        app_config.update()
+        update.message.reply_text(f"<pre>{app_config.TRUSTED_ID_USERNAME}</pre>", parse_mode=ParseMode.HTML)
+        return True
+    elif command[0] == ".h":
+        update.message.reply_text(f".- .+ .a0 .a1 .ls .u .uls .h")
+        return True
     else:
+        update.message.reply_text(f".- .+ .a0 .a1 .ls .u .uls .h")
         return False

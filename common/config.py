@@ -31,6 +31,7 @@ class AppConfig:
 
     TRUSTED_ID = []
     TRUSTED_USERNAME = []
+    TRUSTED_ID_USERNAME = []
 
     UPDATER = {}
 
@@ -45,6 +46,9 @@ class AppConfig:
         self.load_trusted()
 
     def load_trusted(self):
+        self.TRUSTED_ID = []
+        self.TRUSTED_USERNAME = []
+        self.TRUSTED_ID_USERNAME = ""
         with open('trusted.txt', 'r') as file:
             for line in file:
                 if len(line.strip()) > 0:
@@ -57,6 +61,8 @@ class AppConfig:
 
                     if 'username' in data_dict and data_dict['username'] is not None:
                         self.TRUSTED_USERNAME.append(data_dict['username'])
+
+                    self.TRUSTED_ID_USERNAME += line
 
     def set_updater(self, updater):
         self.UPDATER = updater
