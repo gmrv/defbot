@@ -18,10 +18,8 @@ def main() -> None:
     updater = Updater(config.TOKEN)
     dispatcher = updater.dispatcher
 
-    if config.IS_ANTISPAM_ACTIVE:
-        dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, commands.antispam_simple))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, commands.message_handler))
 
-    dispatcher.add_handler(CommandHandler("m", commands.mannage_command))
     dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, commands.new_chat_member))
     dispatcher.add_handler(MessageHandler(None, commands.all_over))
     dispatcher.add_handler(MessageHandler(Filters.status_update.left_chat_member, commands.left_chat_member))

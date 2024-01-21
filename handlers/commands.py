@@ -67,8 +67,15 @@ def antispam(update, context):
         logger.info(f"Join date of user {user_id} is not known yet. It may have joined before the bot started logging.")
 
 
-def antispam_simple(update, context):
-    logger.debug(f"ANTISPAM_SIMPLE: {update}")
+def message_handler(update, context):
+    logger.debug(f"MESSAGE_HANDLER: {update}")
+
+    # Handle command
+    if update.message.text[0] == ".":
+        # if sender is not the owner do nothing
+            is_success = command_handler(update, context)
+            if is_success: return
+    # Handle message
     if not app_config.IS_ANTISPAM_ACTIVE:
         logger.debug(f"ANTISPAM_SIMPLE: Antispam not active")
         return
@@ -86,31 +93,40 @@ def antispam_simple(update, context):
 def all_over(update: Update, context: CallbackContext) -> None:
     logger.debug(f"ALL_OVER: {update}")
 
-def mannage_command(update: Update, context: CallbackContext) -> None:
-    command = update.message.text.split()
+def command_handler(update: Update, context: CallbackContext) -> None:
     user_id = update.message.from_user.id
-    if not user_id == int(app_config.MASTER_ID): return
-    if command[1] == "+":
-        lst = str.join(' ', command[2:]).split(', ')
+    if not user_id == int(app_config.MASTER_ID): return False
+    command = update.message.text.split()
+    logger.debug(f"COMMAND: {command}")
+    if command[0] == ".+":
+        lst = str.join(' ', command[1:]).split(', ')
         logger.debug(f"add words to file: {lst}" )
         utils.append_list_to_file(app_config.STOP_WORDS_FILE, lst)
         app_config.update()
+        update.message.reply_text(f"{app_config.STOP_WORDS}")
         logger.info(f"STOP WORDS: {app_config.STOP_WORDS}")
-    if command[1] == "-":
-        lst_to_remove = str.join(' ', command[2:]).split(', ')
+        return True
+    if command[0] == ".-":
+        lst_to_remove = str.join(' ', command[1:]).split(', ')
         result_list = utils.remove_elements(app_config.STOP_WORDS, lst_to_remove)
         logger.debug(f"remove words: {lst_to_remove}" )
         utils.write_list_to_file(app_config.STOP_WORDS_FILE, result_list)
         app_config.update()
+        update.message.reply_text(f"{app_config.STOP_WORDS}")
         logger.info(f"STOP WORDS: {app_config.STOP_WORDS}")
-    elif command[1] == "a0":
+        return True
+    elif command[0] == ".a0":
         app_config.IS_ANTISPAM_ACTIVE = False
         logger.info("Now antispam inactive")
         update.message.reply_text(f"Now antispam inactive")
-    elif command[1] == "a1":
+        return True
+    elif command[0] == ".a1":
         app_config.IS_ANTISPAM_ACTIVE = True
         logger.info("Now antispam active")
         update.message.reply_text(f"Now antispam active")
-    elif command[1] == "ls":
+        return True
+    elif command[0] == ".ls":
         update.message.reply_text(f"{app_config.STOP_WORDS}")
-    logger.debug(command)
+        return True
+    else:
+        return False
