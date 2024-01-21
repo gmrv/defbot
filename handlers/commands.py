@@ -68,6 +68,8 @@ def antispam(update, context):
 
 
 def message_handler(update, context):
+    user_id = update.message.from_user.id
+    username = update.message.from_user.username
     logger.debug(f"MESSAGE_HANDLER: {update}")
 
     # Handle command
@@ -77,16 +79,21 @@ def message_handler(update, context):
             if is_success: return
     # Handle message
     if not app_config.IS_ANTISPAM_ACTIVE:
-        logger.debug(f"ANTISPAM_SIMPLE: Antispam not active")
+        logger.debug(f"MESSAGE_HANDLER: Antispam not active")
         return
+
+    # If message from trusted user
+    if user_id in app_config.TRUSTED_ID or username in app_config.TRUSTED_USERNAME:
+        logger.debug(f"MESSAGE_HANDLER: Trusted user")
+        return
+
     chat_id = update.message.chat_id
-    username = update.message.from_user.username
     text = update.message.text.replace('\n', '').replace('\r', '')
-    logger.info(text)
+    logger.info(f"MESSAGE_HANDLER: {text}")
     if utils.is_contains_stop_words(text, app_config.STOP_WORDS) or utils.has_alphanumeric_words(text):
         update.message.reply_text(f"Сообщение удалено. Подозрение на спам.")
         context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
-        logger.info("Message removed successfully.")
+        logger.info(f"MESSAGE_HANDLER: Message removed successfully.")
         # context.bot.send_message(chat_id=chat_id, text=f"Сообщение удалено. Подозрение на спам.")
 
 
@@ -97,33 +104,33 @@ def command_handler(update: Update, context: CallbackContext) -> None:
     user_id = update.message.from_user.id
     if not user_id == int(app_config.MASTER_ID): return False
     command = update.message.text.split()
-    logger.debug(f"COMMAND: {command}")
+    logger.debug(f"COMMAND_HANDLER: {command}")
     if command[0] == ".+":
         lst = str.join(' ', command[1:]).split(', ')
-        logger.debug(f"add words to file: {lst}" )
+        logger.debug(f"COMMAND_HANDLER: add words to file: {lst}" )
         utils.append_list_to_file(app_config.STOP_WORDS_FILE, lst)
         app_config.update()
         update.message.reply_text(f"{app_config.STOP_WORDS}")
-        logger.info(f"STOP WORDS: {app_config.STOP_WORDS}")
+        logger.info(f"COMMAND_HANDLER: STOP WORDS: {app_config.STOP_WORDS}")
         return True
     if command[0] == ".-":
         lst_to_remove = str.join(' ', command[1:]).split(', ')
         result_list = utils.remove_elements(app_config.STOP_WORDS, lst_to_remove)
-        logger.debug(f"remove words: {lst_to_remove}" )
+        logger.debug(f"COMMAND_HANDLER: remove words: {lst_to_remove}" )
         utils.write_list_to_file(app_config.STOP_WORDS_FILE, result_list)
         app_config.update()
         update.message.reply_text(f"{app_config.STOP_WORDS}")
-        logger.info(f"STOP WORDS: {app_config.STOP_WORDS}")
+        logger.info(f"COMMAND_HANDLER: STOP WORDS: {app_config.STOP_WORDS}")
         return True
     elif command[0] == ".a0":
         app_config.IS_ANTISPAM_ACTIVE = False
-        logger.info("Now antispam inactive")
-        update.message.reply_text(f"Now antispam inactive")
+        logger.info("COMMAND_HANDLER: Now antispam inactive")
+        update.message.reply_text(f"COMMAND_HANDLER: Now antispam inactive")
         return True
     elif command[0] == ".a1":
         app_config.IS_ANTISPAM_ACTIVE = True
-        logger.info("Now antispam active")
-        update.message.reply_text(f"Now antispam active")
+        logger.info("COMMAND_HANDLER: Now antispam active")
+        update.message.reply_text(f"COMMAND_HANDLER: Now antispam active")
         return True
     elif command[0] == ".ls":
         update.message.reply_text(f"{app_config.STOP_WORDS}")
