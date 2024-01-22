@@ -71,7 +71,9 @@ def message_handler(update, context):
     user_id = update.message.from_user.id
     chat_id = update.message.chat_id
     username = update.message.from_user.username
-    text = update.message.text.replace('\n', '').replace('\r', '')
+    text = update.message.text or update.message.caption or "HAS_NO_TEXT"
+    if text:
+        text = text.replace('\n', '').replace('\r', '')
 
     message_log_string = f"{{'id': {user_id}, 'username': '{username}'}}: {text}"
 
@@ -79,7 +81,7 @@ def message_handler(update, context):
     logger.debug(f"MESSAGE_HANDLER: MESSAGE_LOG: {message_log_string}")
 
     # Handle command
-    if update.message.text[0] == ".":
+    if text[0] == ".":
         # if sender is not the owner do nothing
             is_success = command_handler(update, context)
             if is_success: return
@@ -150,6 +152,7 @@ def command_handler(update: Update, context: CallbackContext) -> None:
     elif command[0] == ".u":
         utils.add_trusted_user(update.message.text[3:])
         app_config.update()
+        update.message.reply_text(f"<pre>{app_config.TRUSTED_ID_USERNAME}</pre>", parse_mode=ParseMode.HTML)
         return True
     elif command[0] == ".uls":
         app_config.update()

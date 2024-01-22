@@ -20,7 +20,8 @@ def main() -> None:
 
     dispatcher = updater.dispatcher
 
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, commands.message_handler))
+    # dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, commands.message_handler))
+    dispatcher.add_handler(MessageHandler(None, commands.message_handler))
 
     dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, commands.new_chat_member))
     dispatcher.add_handler(MessageHandler(None, commands.all_over))
