@@ -67,6 +67,10 @@ def antispam(update, context):
         logger.info(f"Join date of user {user_id} is not known yet. It may have joined before the bot started logging.")
 
 
+def delete_message(context: CallbackContext):
+    message_to_delete = context.job.context
+    message_to_delete.delete()
+
 def message_handler(update, context):
     user_id = update.message.from_user.id
     chat_id = update.message.chat_id
@@ -102,8 +106,10 @@ def message_handler(update, context):
 
     # Spam detecting
     if utils.is_contains_stop_words(text, app_config.STOP_WORDS) or utils.has_alphanumeric_words(text):
-        update.message.reply_text(f"Сообщение удалено. Подозрение на спам.")
+        msg=update.message.reply_text(f"Сообщение удалено. Подозрение на спам.")
         context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
+        app_config.UPDATER.job_queue.run_once(delete_message, 60*5, context=msg)
+        # app_config.UPDATER.job_queue.run_once(msg.delete, when=datetime.now(app_config.TZ)+timedelta(minutes=1))
         logger.info(f"MESSAGE_HANDLER: Message removed successfully.")
         # context.bot.send_message(chat_id=chat_id, text=f"Сообщение удалено. Подозрение на спам.")
     else:
