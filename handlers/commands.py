@@ -93,7 +93,7 @@ def message_handler(update, context):
 
     # Handle message
     # If message from trusted user
-    if user_id in app_config.TRUSTED_ID or username in app_config.TRUSTED_USERNAME:
+    if user_id in app_config.TRUSTED_ID:
         logger.debug(f"MESSAGE_HANDLER: Trusted user")
         return
     else:
