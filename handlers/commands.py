@@ -73,13 +73,14 @@ def delete_message(context: CallbackContext):
 
 def message_handler(update, context):
     user_id = update.message.from_user.id
+    user_fio = f"{update.message.from_user.first_name} {update.message.from_user.last_name}"
     chat_id = update.message.chat_id
     username = update.message.from_user.username
     text = update.message.text or update.message.caption or "HAS_NO_TEXT"
     if text:
         text = text.replace('\n', '').replace('\r', '')
 
-    message_log_string = f"{{'id': {user_id}, 'username': '{username}'}}: {text}"
+    message_log_string = f"{{'id': {user_id}, 'username': '{username}', 'name': '{user_fio}'}}: {text}"
 
     logger.debug(f"MESSAGE_HANDLER: {update}")
     logger.debug(f"MESSAGE_HANDLER: MESSAGE_LOG: {message_log_string}")
@@ -106,10 +107,13 @@ def message_handler(update, context):
 
     # Spam detecting
     if utils.is_contains_stop_words(text, app_config.STOP_WORDS) or utils.has_alphanumeric_words(text):
+        logger.info(f"MESSAGE_HANDLER: Spam detected.")
         msg=update.message.reply_text(f"Сообщение удалено. Подозрение на спам.")
-        context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
+        try:
+            context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
+        except Exception as e:
+            logger.debug(f"MESSAGE_HANDLER: Exception while message deleting")
         app_config.UPDATER.job_queue.run_once(delete_message, 60*5, context=msg)
-        # app_config.UPDATER.job_queue.run_once(msg.delete, when=datetime.now(app_config.TZ)+timedelta(minutes=1))
         logger.info(f"MESSAGE_HANDLER: Message removed successfully.")
         # context.bot.send_message(chat_id=chat_id, text=f"Сообщение удалено. Подозрение на спам.")
     else:
